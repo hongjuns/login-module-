@@ -15,10 +15,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import Copyright from './Copyright'
 import { AuthContext } from "../App";
 
-
-
-
-
 const useStyles = makeStyles((theme) => ({
   root: {
     height: '100vh',
@@ -61,9 +57,30 @@ export default function SignInSide() {
     errorMessage: null
   };
 
+  React.useEffect(() => {
+    window.Kakao.init('3e70cb3bec1770738ab7e05443149248');
+    window.Kakao.Auth.createLoginButton({
+      container: '#kakao-login-btn',
+      success: function(authObj) {
+        // 로그인 성공시, API를 호출합니다.
+          window.Kakao.API.request({
+            url: '/v2/user/me',
+              success: function(res) {
+                console.log(JSON.stringify(res,null,2))
+               // alert(JSON.stringify(res));
+          },
+          fail: function(error) {
+            alert(JSON.stringify(error));
+          }
+        });
+      },
+      fail: function(err) {
+        alert(JSON.stringify(err));
+      }
+    })
+  }, [])
+
   const [data, setData] = React.useState(initialState);
-
-
   const handleInputChange = event => {
     setData({
       ...data,
@@ -181,9 +198,7 @@ export default function SignInSide() {
 
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
-                </Link>
+                 <a id="kakao-login-btn"></a>
               </Grid>
               <Grid item>
                 <Link to="/signup" variant="body2">
