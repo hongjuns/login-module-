@@ -11,8 +11,11 @@ import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles , withStyles } from '@material-ui/core/styles';
 import Copyright from './Copyright'
+import KakaoLogin from './KakaLogin'
+import { red, yellow } from '@material-ui/core/colors';
+
 import { AuthContext } from "../App";
 
 const useStyles = makeStyles((theme) => ({
@@ -46,7 +49,29 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SignInSide() {
+const KakaoButton = withStyles((theme) => ({
+  root: {
+    color: theme.palette.getContrastText(yellow[500]),
+    backgroundColor: yellow[500],
+    '&:hover': {
+      backgroundColor: yellow[700],
+    },
+  },
+}))(Button);
+
+
+const GoogleButton = withStyles((theme) => ({
+  root: {
+    color: theme.palette.getContrastText(red[500]),
+    backgroundColor: red[500],
+    '&:hover': {
+      backgroundColor: red[700],
+    },
+  },
+}))(Button);
+
+
+export default function SignInSide( { location }) {
   const classes = useStyles();
 
   const { dispatch } = React.useContext(AuthContext);
@@ -57,28 +82,28 @@ export default function SignInSide() {
     errorMessage: null
   };
 
-  React.useEffect(() => {
-    window.Kakao.init('3e70cb3bec1770738ab7e05443149248');
-    window.Kakao.Auth.createLoginButton({
-      container: '#kakao-login-btn',
-      success: function(authObj) {
-        // 로그인 성공시, API를 호출합니다.
-          window.Kakao.API.request({
-            url: '/v2/user/me',
-              success: function(res) {
-                console.log(JSON.stringify(res,null,2))
-               // alert(JSON.stringify(res));
-          },
-          fail: function(error) {
-            alert(JSON.stringify(error));
-          }
-        });
-      },
-      fail: function(err) {
-        alert(JSON.stringify(err));
-      }
-    })
-  }, [])
+  // React.useEffect(() => {
+  //   window.Kakao.init('3e70cb3bec1770738ab7e05443149248');
+  //   window.Kakao.Auth.createLoginButton({
+  //     container: '#kakao-login-btn',
+  //     success: function(authObj) {
+  //       // 로그인 성공시, API를 호출합니다.
+  //         window.Kakao.API.request({
+  //           url: '/v2/user/me',
+  //             success: function(res) {
+  //               console.log(JSON.stringify(res,null,2))
+  //              // alert(JSON.stringify(res));
+  //         },
+  //         fail: function(error) {
+  //           alert(JSON.stringify(error));
+  //         }
+  //       });
+  //     },
+  //     fail: function(err) {
+  //       alert(JSON.stringify(err));
+  //     }
+  //   })
+  // }, [])
 
   const [data, setData] = React.useState(initialState);
   const handleInputChange = event => {
@@ -176,7 +201,7 @@ export default function SignInSide() {
               Sign In
             </Button>
 
-            <Button
+            <GoogleButton
               type="submit"
               fullWidth
               variant="contained"
@@ -184,22 +209,22 @@ export default function SignInSide() {
               className={classes.submit}
             >
               Google In
-            </Button>
+            </GoogleButton>
 
-            <Button
+            <KakaoButton
               type="submit"
               fullWidth
               variant="contained"
-              color="primary"
+              color="#FFDE03"
               className={classes.submit}
             >
-              kakao In
-            </Button>
+             <KakaoLogin location={location}/>
+            </KakaoButton>
 
             <Grid container>
-              <Grid item xs>
-                 <a id="kakao-login-btn"></a>
-              </Grid>
+              {/* <Grid item xs>
+                 <KakaoLogin location={location}/>
+              </Grid> */}
               <Grid item>
                 <Link to="/signup" variant="body2">
                   {"Don't have an account? Sign Up"}
